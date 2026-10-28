@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B4CCA">
+<title>Mon Budget</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF1FA;--sf:#fff;--ink:#121826;--mu:#6B7488;--pr:#3B4CCA;--pr2:#E4E8FB;--ok:#12A594;--bad:#E5484D;--am:#F5A524;--ln:#DDE2F0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1220;--sf:#171C2F;--ink:#EEF1FA;--mu:#98A1B8;--pr:#7B8BFF;--pr2:#232A4A;--ln:#262D47}}
+:root[data-theme="dark"]{--bg:#0E1220;--sf:#171C2F;--ink:#EEF1FA;--mu:#98A1B8;--pr:#7B8BFF;--pr2:#232A4A;--ln:#262D47}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--bg);color:var(--ink);font-family:Sora,system-ui,-apple-system,Roboto,sans-serif;font-size:15px}
+body{max-width:520px;margin:0 auto;padding:16px 16px 110px}
+h1{font-size:20px;font-weight:700}h2{font-size:16px;margin:20px 0 10px}h3{font-size:17px;margin-bottom:14px}
+.mu{color:var(--mu);font-size:13px}
+.card{background:var(--sf);border-radius:20px;padding:16px;margin-bottom:12px;border:1px solid var(--ln)}
+.hero{background:var(--pr);color:#fff;border-radius:26px;padding:20px;margin:14px 0 12px}
+:root[data-theme="dark"] .hero{color:#0E1220}
+.big{font-size:34px;font-weight:700;letter-spacing:-1px;margin:4px 0}
+.stack{display:flex;height:10px;border-radius:6px;overflow:hidden;margin-top:14px;background:rgba(255,255,255,.25)}
+.bar{height:8px;border-radius:5px;background:var(--pr2);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;border-radius:5px}
+.row{display:flex;gap:10px;align-items:center}.sp{justify-content:space-between}
+.dot{width:12px;height:12px;border-radius:4px;flex:none}
+input,select{width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--ln);background:var(--bg);color:var(--ink);font:inherit;margin:6px 0 10px}
+input[type=range]{padding:0;margin:8px 0;accent-color:var(--pr);border:0;background:none}
+input[type=checkbox]{width:22px;height:22px;margin:0;accent-color:var(--ok);flex:none}
+.btn{border:0;border-radius:14px;padding:13px 18px;background:var(--pr);color:#fff;font:inherit;font-weight:600;cursor:pointer;flex:1}
+:root[data-theme="dark"] .btn{color:#0E1220}
+.btn.ghost{background:var(--pr2);color:var(--pr)}.btn.sm{padding:8px 12px;flex:none;font-size:13px}
+.btn.del{background:none;color:var(--bad);padding:8px}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--sf);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+.nav div{display:flex;width:100%;max-width:520px}
+.nav button{flex:1;border:0;background:none;color:var(--mu);font:inherit;font-size:12px;padding:10px 0 12px;cursor:pointer}
+.nav button b{display:block;font-size:20px;font-weight:400}
+.nav button.on{color:var(--pr);font-weight:600}
+.fab{position:fixed;right:max(16px,calc(50% - 244px));bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:6;border:0;border-radius:18px;padding:15px 20px;background:var(--am);color:#121826;font:inherit;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer}
+.ov{position:fixed;inset:0;background:rgba(10,14,28,.55);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sh{background:var(--sf);width:100%;max-width:520px;border-radius:26px 26px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0px));max-height:90%;overflow:auto;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.sh{animation:none}}
+.tag{font-size:12px;padding:4px 10px;border-radius:20px;background:var(--pr2);color:var(--pr);font-weight:600}
+.tag.g{background:#12A59420;color:var(--ok)}.tag.r{background:#E5484D20;color:var(--bad)}
+.task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--ln)}
+.task.d span{text-decoration:line-through;color:var(--mu)}
+.cols{display:flex;align-items:flex-end;gap:5px;height:110px;margin-top:10px}
+.cols div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:10px;color:var(--mu)}
+.cols i{display:block;width:100%;background:var(--pr);border-radius:5px 5px 0 0;min-height:2px}
+.empty{text-align:center;padding:36px 10px;color:var(--mu)}
+.hd{display:flex;justify-content:space-between;align-items:center}
+details.card summary{font-weight:600;cursor:pointer}
+details.card p{color:var(--mu);margin-top:10px;line-height:1.55;font-size:14px}
+.nav button{font-size:11px}
+</style></head><body>
+<div class="hd"><div><div class="mu" id="dt"></div><h1>Mon Budget</h1></div><button class="btn ghost sm" data-a="theme" aria-label="Changer de thème">Thème</button></div>
+<div id="v"></div>
+<button class="fab" id="fab" data-a="fab"></button>
+<nav class="nav"><div id="nv"></div></nav>
+<script>
+const $=s=>document.querySelector(s),KEY='mon_budget_v1';
+const ENV=[['epargne','Épargne','#3B4CCA'],['famille','Dépenses familiales','#E5484D'],['sante','Santé','#12A594'],['imprevus','Imprévus','#F5A524'],['carburant','Carburant','#6E56CF'],['poche','Argent de poche','#E93D82'],['social','Cérémonies & solidarité','#B7791F'],['tontine','Tontine','#0E8F7E']];
+const DEF={cur:'FCFA',inc:{},pct:{epargne:15,famille:30,sante:8,imprevus:7,carburant:8,poche:12,social:10,tontine:10},ext:[],rec:[],rp:{},debts:[],prof:'fonct',pay:0,name:'',exp:[],proj:[]};
+let S=DEF;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY))||{})}catch(e){}
+S.pct=Object.assign({social:0,tontine:0},S.pct);S.ext=S.ext||[];
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const f=n=>Math.round(n).toLocaleString('fr-FR')+' '+esc(S.cur);
+const ym=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+const ymd=d=>ym(d)+'-'+String(d.getDate()).padStart(2,'0');
+const fd=d=>d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+const MO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const sum=a=>a.reduce((s,e)=>s+e.a,0);
+const incM=m=>(S.inc[m]||0)+sum(S.ext.filter(e=>e.d.startsWith(m)));
+const mNow=()=>ym(new Date());
+const recDue=m=>S.rec.filter(r=>!S.rp[r.id+'|'+m]);
+const debtDue=m=>S.debts.filter(d=>d.t==='dette'&&d.mens>0).reduce((s,d)=>{const left=d.total-sum(d.pay),pm=sum(d.pay.filter(p=>p.d.startsWith(m)));return s+Math.max(0,Math.min(left,d.mens-pm))},0);
+const greet=()=>{const h=new Date().getHours();return (h<12?'I ni sɔgɔma':h<17?'I ni tile':'I ni wula')+(S.name?', '+S.name:'')};
+const TIPS=['Payez-vous d’abord : mettez l’épargne de côté dès la paie, vivez avec le reste.','Préparez la Tabaski et la rentrée des classes tout au long de l’année, pas le mois d’avant.','Regroupez vos retraits mobile money : chaque retrait a ses frais.','Notez même les petites dépenses : ce sont elles qui font les grosses fuites.','La tontine aide à épargner, mais fixez un plafond que votre salaire supporte.','Un fonds d’imprévus évite d’emprunter quand la santé ou la famille surprend.','Avant un achat important, attendez 48 heures : l’envie passe, le budget reste.'];
+const PRE={fonct:{epargne:15,famille:30,sante:8,imprevus:7,carburant:8,poche:12,social:10,tontine:10},priv:{epargne:20,famille:30,sante:8,imprevus:7,carburant:10,poche:10,social:7,tontine:8},indep:{epargne:15,famille:25,sante:7,imprevus:15,carburant:12,poche:8,social:8,tontine:10}};
+const TPL={'Tabaski (mouton)':['Fixer le budget du mouton','Acheter le mouton','Condiments et provisions','Habits des enfants'],'Rentrée scolaire':['Frais d’inscription','Fournitures','Uniformes'],'Pèlerinage (Hajj / Omra)':['S’inscrire','Constituer le dossier','Passeport et visa'],'Terrain / construction':['Acheter la parcelle','Titre foncier ou lettre d’attribution','Plan et devis','Matériaux','Fondations'],'Moto':['Comparer les prix','Acheter','Papiers et immatriculation'],'Mariage / baptême':['Liste des invités','Réserver la salle','Dépenses de cérémonie'],'Téléphone':['Comparer les offres','Acheter'],'Voiture':['Définir le budget','Comparer les offres','Acheter','Assurance et papiers'],'Tontine (ma part)':['Fixer la cotisation','Cotiser à chaque tour']};
+const scoreCard=(ex,sal)=>{const ep=sum(ex.filter(e=>e.env==='epargne')),ov=ENV.filter(([k])=>k!=='epargne'&&sum(ex.filter(e=>e.env===k))>sal*S.pct[k]/100).length,sc=Math.max(0,Math.min(100,Math.round(55+ep/sal*150-ov*15))),l=sc>=75?['Très bien','g']:sc>=50?['Correct','']:['À surveiller','r'];return `<div class="card"><div class="row sp"><b>Santé financière</b><span class="tag ${l[1]}">${l[0]} · ${sc}/100</span></div><div class="bar"><i style="width:${sc}%;background:var(--ok)"></i></div></div>`};
+let tab='home',hy=new Date().getFullYear(),hm='';
+const TABS=[['home','◉','Accueil'],['budget','◐','Budget'],['proj','▲','Projets'],['hist','▤','Historique'],['aide','?','Aide']];
+
+function home(){
+ const now=new Date(),m=ym(now),sal=incM(m),ex=S.exp.filter(e=>e.d.startsWith(m)),sp=sum(ex),rest=sal-sp;
+ let dl=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate()+1,pn='';if(S.pay>0){const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());let pd=new Date(t0.getFullYear(),t0.getMonth(),S.pay);if(pd<=t0)pd=new Date(t0.getFullYear(),t0.getMonth()+1,S.pay);dl=Math.max(1,Math.round((pd-t0)/864e5));pn='Prochaine paie dans '+dl+' jour'+(dl>1?'s':'')}
+ let h=`<div class="hero"><div style="opacity:.8;font-size:13px">Reste pour ${MO[now.getMonth()]}</div><div class="big">${f(rest)}</div>
+ <div style="opacity:.85;font-size:13px">${f(sp)} sorti sur ${f(sal)}${sal&&rest>0?' · '+f(rest/dl)+' par jour':''}${pn?'<br>'+pn:''}${sal?'<br>Reste à vivre (après charges fixes et dettes du mois) : <b>'+f(rest-sum(recDue(m))-debtDue(m))+'</b>':''}</div>
+ <div class="stack">${ENV.map(e=>`<i style="width:${S.pct[e[0]]}%;background:${e[2]}"></i>`).join('')}</div></div>
+ <button class="btn" data-a="fab" style="width:100%;margin-bottom:12px">+ Ajouter une dépense</button><div class="card"><div class="mu">Salaire de ${MO[now.getMonth()]}</div><div class="row"><input id="sal" type="number" inputmode="decimal" placeholder="Votre salaire net" value="${S.inc[m]||''}"><button class="btn sm" data-a="sal">Valider</button></div><button class="btn ghost sm" data-a="ext" style="margin-top:8px">+ Prime ou revenu en plus</button></div>${sal?scoreCard(ex,sal):''}<div class="card"><div class="mu">Astuce du jour</div>${TIPS[Math.floor(now/864e5)%TIPS.length]}</div>`;
+ if(!sal)h+=`<div class="empty">Saisissez votre salaire : il sera réparti automatiquement dans vos volets.<br><br><button class="btn ghost sm" data-a="tab" data-t="aide">Comment ça marche ?</button></div>`;
+ else h+='<h2>Vos volets</h2>'+ENV.map(([k,n,c])=>{const al=sal*S.pct[k]/100,u=sum(ex.filter(e=>e.env===k)),p=al?Math.min(100,u/al*100):0;
+  return `<div class="card"><div class="row sp"><div class="row"><span class="dot" style="background:${c}"></span><b>${n}</b></div><span class="tag ${u>al?'r':''}">${S.pct[k]}%</span></div>
+  <div class="mu" style="margin-top:6px">${f(u)} sur ${f(al)}${u>al?' · dépassé de '+f(u-al):' · reste '+f(al-u)+(al&&u>=al*.8?' · bientôt atteint':'')}</div><div class="bar"><i style="width:${p}%;background:${u>al?'var(--bad)':c}"></i></div><button class="btn ghost sm" data-a="xp" data-e="${k}" style="margin-top:10px">+ Dépense</button></div>`}).join('');
+ if(S.rec.length)h+=chargesCard(m);const t=[];S.debts.forEach(d=>{if(d.date&&d.total>sum(d.pay)){const k=(new Date(d.date+'T00:00:00')-now)/864e5;if(k<=15)t.push(`<b>${esc(d.n)}</b> ${d.t==='dette'?'à rembourser':'à récupérer'} ${k<0?'(en retard)':'dans '+Math.ceil(k)+' j'}`)}});S.proj.forEach(p=>{(p.tasks||[]).filter(x=>!x.done).forEach(x=>t.push(`${esc(x.t)} <span class="mu">· ${esc(p.name)}</span>`));
+  if(p.date){const d=(new Date(p.date+'T00:00:00')-now)/864e5;if(d>=0&&d<=30&&p.saved<p.target)t.push(`<b>${esc(p.name)}</b> arrive à échéance dans ${Math.ceil(d)} j`)}});
+ if(t.length)h+=`<h2>Rappels</h2><div class="card">${t.slice(0,6).map(x=>`<div class="task"><span>${x}</span></div>`).join('')}</div>`;
+ return h}
+
+function budget(){
+ const tot=Object.values(S.pct).reduce((a,b)=>a+b,0);
+ return `<h2>Répartition du salaire</h2><div class="card">${ENV.map(([k,n,c])=>`<div><div class="row sp"><span class="row"><span class="dot" style="background:${c}"></span>${n}</span><b id="p_${k}">${S.pct[k]}%</b></div><input type="range" min="0" max="100" value="${S.pct[k]}" data-r="${k}"></div>`).join('')}
+ <div class="mu" style="margin-bottom:8px">Faites glisser chaque curseur : le total doit faire 100 %.</div><div class="row sp"><span class="mu">Total</span><span class="tag" id="tot">${tot}%</span></div></div>
+ <h2>Simulateur d’épargne</h2><div class="card"><div class="mu">Combien voulez-vous mettre de côté chaque mois ?</div><input id="sv" type="number" inputmode="decimal" placeholder="Montant à épargner par mois">
+ <div class="mu">Objectif total (facultatif)</div><input id="sg" type="number" inputmode="decimal" placeholder="Somme à atteindre">
+ <div class="row"><button class="btn" data-a="sim">Calculer</button></div><div id="simres" style="margin-top:12px"></div></div>
+ <h2>Charges fixes</h2><div class="card"><div class="mu">Loyer, électricité, eau, crédit téléphone, scolarité… ajoutez-les une fois : elles reviennent chaque mois sur l’Accueil.</div>${S.rec.map(r=>`<div class="task"><span>${esc(r.n)} · le ${r.day}</span><b style="margin-left:auto">${f(r.a)}</b><button class="btn del" data-a="delrec" data-id="${r.id}" aria-label="Supprimer">✕</button></div>`).join('')}<button class="btn ghost sm" data-a="addrec" style="margin-top:10px">+ Ajouter</button></div><h2>Mon profil</h2><div class="card"><input id="nm" placeholder="Votre prénom" value="${esc(S.name||'')}" data-nm="1"><select id="pf"><option value="fonct" ${S.prof==='fonct'?'selected':''}>Fonctionnaire</option><option value="priv" ${S.prof==='priv'?'selected':''}>Salarié du privé</option><option value="indep" ${S.prof==='indep'?'selected':''}>Indépendant ou commerçant</option></select><div class="mu">Jour de paie (0 = fin de mois) : le « par jour » se calcule jusqu’à la prochaine paie.</div><input type="number" inputmode="numeric" min="0" max="31" value="${S.pay||''}" placeholder="Ex. 28" data-pd="1"><button class="btn" data-a="prof">Appliquer la répartition du profil</button></div><h2>Devise</h2><div class="card"><input id="cur" value="${esc(S.cur)}" maxlength="6" data-c="1"></div>`}
+
+function proj(){
+ if(!S.proj.length)return `<div class="empty">Aucun projet pour l’instant.<br>Voiture, maison, moto, téléphone : ajoutez-en un avec le bouton ci-dessous.</div>`;
+ return `<h2>Mes projets</h2>`+S.proj.map((p,i)=>{
+  const rem=Math.max(0,p.target-p.saved),pr=p.target?Math.min(100,p.saved/p.target*100):0,dl=p.date?new Date(p.date+'T00:00:00'):null;
+  const ml=dl?Math.max(1,Math.ceil((dl-new Date())/2592e6)):0;let eta=null;
+  if(p.contrib>0&&rem>0){eta=new Date();eta.setMonth(eta.getMonth()+Math.ceil(rem/p.contrib))}
+  let st=rem===0?['Objectif atteint','g']:eta&&dl?(eta<=dl?['Dans les temps','g']:['En retard','r']):['En cours',''];
+  return `<div class="card"><div class="row sp"><b>${esc(p.name)}</b><span class="tag ${st[1]}">${st[0]}</span></div>
+  <div class="mu" style="margin-top:6px">${f(p.saved)} sur ${f(p.target)} · ${Math.round(pr)}%</div><div class="bar"><i style="width:${pr}%;background:var(--pr)"></i></div>
+  <div class="mu" style="margin-top:10px">${dl?'Échéance : '+fd(dl)+(rem?'<br>À mettre de côté : '+f(rem/ml)+' par mois':''):'Aucune échéance'}${eta?'<br>À votre rythme ('+f(p.contrib)+'/mois) : terminé le '+fd(eta):''}</div>
+  <div style="margin-top:10px">${(p.tasks||[]).map((x,j)=>`<label class="task ${x.done?'d':''}"><input type="checkbox" ${x.done?'checked':''} data-a="tk" data-i="${i}" data-j="${j}"><span>${esc(x.t)}</span></label>`).join('')}</div>
+  <div class="row" style="margin-top:6px"><input id="nt${i}" placeholder="Nouvelle tâche" style="margin:0"><button class="btn sm" data-a="addtk" data-i="${i}">Ajouter</button></div>
+  <div class="row sp" style="margin-top:10px"><button class="btn ghost sm" data-a="pay" data-i="${i}">+ Verser</button><button class="btn del" data-a="delp" data-i="${i}">Supprimer</button></div></div>`}).join('')}
+
+function hist(){
+ const ys=new Set([new Date().getFullYear()]);S.exp.forEach(e=>ys.add(+e.d.slice(0,4)));Object.keys(S.inc).forEach(k=>ys.add(+k.slice(0,4)));
+ const pre=hm?hy+'-'+hm:''+hy,ex=S.exp.filter(e=>e.d.startsWith(pre)).sort((a,b)=>b.d.localeCompare(a.d));
+ const inc=Object.entries(S.inc).filter(([k])=>k.startsWith(pre)).reduce((s,[,v])=>s+v,0)+sum(S.ext.filter(e=>e.d.startsWith(pre))),sp=sum(ex);
+ let h=`<div class="row"><select id="hy" data-h="y">${[...ys].sort().map(y=>`<option ${y===hy?'selected':''}>${y}</option>`).join('')}</select>
+ <select id="hm" data-h="m"><option value="">Toute l’année</option>${MO.map((n,i)=>{const v=String(i+1).padStart(2,'0');return `<option value="${v}" ${v===hm?'selected':''}>${n}</option>`}).join('')}</select></div>
+ <div class="card"><div class="row sp"><span class="mu">Total gagné</span><b>${f(inc)}</b></div><div class="row sp" style="margin-top:8px"><span class="mu">Total dépensé</span><b>${f(sp)}</b></div>
+ <div class="row sp" style="margin-top:8px"><span class="mu">Solde</span><b style="color:${inc-sp<0?'var(--bad)':'var(--ok)'}">${f(inc-sp)}</b></div></div>`;
+ if(!hm){const mv=MO.map((_,i)=>sum(ex.filter(e=>e.d.slice(5,7)===String(i+1).padStart(2,'0')))),mx=Math.max(1,...mv);
+  h+=`<div class="card"><b>Dépenses par mois</b><div class="cols">${mv.map((v,i)=>`<div><i style="height:${v/mx*85}%"></i>${MO[i].slice(0,1).toUpperCase()}</div>`).join('')}</div></div>`}
+ h+=`<h2>Par volet</h2><div class="card">${ENV.map(([k,n,c])=>`<div class="row sp" style="padding:5px 0"><span class="row"><span class="dot" style="background:${c}"></span>${n}</span><b>${f(sum(ex.filter(e=>e.env===k)))}</b></div>`).join('')}</div><h2>Opérations</h2>`;
+ return h+(ex.length?ex.map(e=>{const en=ENV.find(x=>x[0]===e.env);return `<div class="card row sp"><div><b>${esc(e.n||en[1])}</b><div class="mu">${en[1]} · ${fd(new Date(e.d+'T00:00:00'))}</div></div><div class="row"><b>${f(e.a)}</b><button class="btn del" style="color:var(--pr)" data-a="ex" data-id="${e.id}" aria-label="Modifier">✎</button><button class="btn del" data-a="dx" data-id="${e.id}" aria-label="Supprimer">✕</button></div></div>`}).join(''):'<div class="empty">Aucune dépense sur cette période.<br>Les pourcentages ne sont que des parts prévues : chaque dépense se note avec « + Dépense ».</div>')}
+
+function aide(){
+ const Q=[
+ ['Par où commencer ?','Sur l’Accueil, saisissez votre salaire net du mois et touchez « Valider ». Il est aussitôt réparti entre vos volets. Ensuite, notez chaque dépense avec le bouton « + Dépense ».'],
+ ['Comment modifier ou supprimer une dépense ?','Ouvrez l’Historique, choisissez l’année et le mois, puis touchez ✎ à droite de la dépense pour changer le montant, le volet, la description ou la date. Touchez ✕ pour la supprimer. Les volets et le reste se recalculent aussitôt.'],['Pourquoi mon historique est vide après avoir saisi mon salaire ?','Les pourcentages sont seulement des parts prévues pour chaque volet : ils ne créent aucune dépense. L’historique se remplit quand vous notez ce que vous dépensez, avec « + Dépense » (sur l’Accueil, dans chaque volet, ou dans l’Historique). Votre salaire apparaît déjà dans « Total gagné ».'],['Comment fonctionne la répartition du salaire ?','Chaque volet reçoit un pourcentage de votre salaire. Dans l’onglet Budget, faites glisser les curseurs : le total doit faire 100 %. Le bouton du profil (fonctionnaire, privé, indépendant) propose une répartition de départ que vous pouvez modifier.'],
+ ['Que veut dire le montant « Reste » en haut ?','C’est votre salaire (plus les primes ajoutées) moins toutes les sorties du mois, épargne comprise. Le montant « par jour » est ce reste divisé par les jours avant la prochaine paie.'],
+ ['À quoi sert le simulateur d’épargne ?','Entrez la somme que vous voulez mettre de côté chaque mois : l’application vous dit combien vous pouvez dépenser au maximum, par mois et par jour. Avec un objectif total, elle donne aussi la date où vous l’atteindrez. « Appliquer » règle votre répartition en conséquence.'],
+ ['Comment suivre un projet et sa date de fin ?','Créez un projet avec son coût, la date souhaitée et ce que vous pouvez verser par mois. L’application calcule combien mettre de côté par mois pour finir à temps, et la date de fin à votre rythme. « + Verser » ajoute l’argent mis de côté.'],
+ ['Comment fonctionnent les rappels ?','Les tâches non cochées et les projets qui arrivent à échéance dans moins de 30 jours apparaissent dans « Rappels » sur l’Accueil. Cochez une tâche quand elle est faite : elle disparaît des rappels. L’application n’envoie pas encore de notification sur le téléphone.'],
+ ['Que signifie « Santé financière » ?','C’est une note sur 100. Elle monte quand vous épargnez et baisse pour chaque volet dont vous dépassez la part prévue. Elle sert de repère, pas de jugement.'],
+ ['Que faire si je dépasse un volet ?','Le volet passe en rouge. Vous pouvez réduire un autre volet avec les curseurs, ou puiser dans les Imprévus. Si cela se répète chaque mois, augmentez la part de ce volet dans Budget.'],
+ ['Que mettre dans Cérémonies et solidarité, et dans Tontine ?','Cérémonies et solidarité : baptêmes, mariages, décès, aide à la famille élargie. Tontine : vos cotisations régulières. Notez-les comme des dépenses dans ces volets.'],
+ ['Comment ajouter une prime ou un autre revenu ?','Sur l’Accueil, touchez « + Prime ou revenu en plus ». Ce montant s’ajoute au salaire du mois et se répartit dans vos volets.'],
+ ['Comment revoir mes dépenses passées ?','Dans Historique, choisissez une année et, si vous voulez, un mois. Vous voyez le total gagné, le total dépensé, le solde, le détail par volet et la liste des opérations. Touchez ✕ pour supprimer une erreur.'],
+ ['Mes données sont-elles en sécurité ?','Elles sont enregistrées uniquement sur ce téléphone, dans le navigateur. Si vous effacez les données du navigateur ou changez de téléphone, elles disparaissent. Faites une sauvegarde de temps en temps (en bas de cette page).'],
+ ['À quoi servent les charges fixes ?','Dans Budget, ajoutez une fois vos dépenses qui reviennent chaque mois (loyer, électricité, eau, scolarité…). Elles apparaissent sur l’Accueil : touchez « Payer » quand c’est fait, et le montant est noté dans le volet choisi.'],['Que veut dire « Reste à vivre » ?','C’est ce qu’il vous reste vraiment à dépenser : votre argent du mois moins ce que vous avez déjà dépensé, moins les charges fixes pas encore payées et les mensualités de dettes à venir.'],['Comment noter une dette ou une avance sur salaire ?','Dans Projets, en bas, touchez « + Dette ou avance ». Choisissez « Je dois » (avance, dette) ou « On me doit » (argent prêté). Chaque remboursement est suivi : celui que vous faites compte dans Dépenses familiales, celui que vous recevez s’ajoute à vos revenus.'],['Comment changer la devise ?','Dans Budget, tout en bas, modifiez le champ « Devise » (FCFA par défaut).']];
+ const G=[['Volet','une enveloppe de votre salaire (épargne, santé, carburant…) avec son pourcentage.'],['Dépassement','quand vous dépensez plus que la part prévue pour un volet.'],['Solde','ce que vous avez gagné moins ce que vous avez dépensé.'],['Tontine','épargne collective où chacun cotise à chaque tour et un membre reçoit la somme.'],['Échéance','la date à laquelle un projet doit être terminé.'],['Charge fixe','dépense qui revient chaque mois pour le même montant (loyer, eau, électricité).'],['Reste à vivre','ce qu’il reste après les dépenses faites et les charges et dettes à venir.'],['Fonds d’imprévus','argent gardé pour les urgences (santé, panne, famille).']];
+ return `<h2>Démarrage rapide</h2><div class="card">${['1. Accueil : saisissez votre salaire net et validez.','2. Budget : choisissez votre profil et ajustez les pourcentages.','3. Accueil : notez chaque dépense avec « + Dépense ».','4. Projets : créez un projet, cochez ses tâches et versez de l’argent.','5. Historique : relisez vos mois et vos années.'].map(x=>`<div class="task"><span>${x}</span></div>`).join('')}</div>
+ <h2>Questions fréquentes</h2>${Q.map(([q,a])=>`<details class="card"><summary>${q}</summary><p>${a}</p></details>`).join('')}
+ <h2>Petit lexique</h2><div class="card">${G.map(([t,d])=>`<div class="task"><span><b>${t}</b> : ${d}</span></div>`).join('')}</div>
+ <h2>Mes données</h2><div class="card"><div class="mu">Vos données restent sur ce téléphone.</div><button class="btn" style="margin-top:10px;width:100%" data-a="bk">Sauvegarder ou restaurer</button></div>`}
+function backup(){
+ sheet('Sauvegarde',`<div class="mu">Copiez ce texte pour garder une sauvegarde. Pour restaurer, collez-le ici puis touchez « Restaurer ».</div><textarea name="j" style="width:100%;height:150px;margin:8px 0;border-radius:12px;padding:10px;border:1px solid var(--ln);background:var(--bg);color:var(--ink);font:12px monospace">${esc(JSON.stringify(S))}</textarea><button class="btn del" data-a="rst">Tout effacer</button>`,
+ v=>{try{const o=JSON.parse(v('j'));if(!o||typeof o!=='object'||!o.pct)throw 0;S=Object.assign({},DEF,o);S.pct=Object.assign({social:0,tontine:0},S.pct);S.ext=S.ext||[];save();R()}catch(e){alert('Texte invalide');return false}},'Restaurer')}
+function R(){
+ $('#v').innerHTML=({home,budget,proj:()=>proj()+debtsView(),hist,aide}[tab])();
+ $('#nv').innerHTML=TABS.map(t=>`<button class="${t[0]===tab?'on':''}" data-a="tab" data-t="${t[0]}"><b>${t[1]}</b>${t[2]}</button>`).join('');
+ const fb=$('#fab');fb.style.display=tab==='home'||tab==='proj'||tab==='hist'?'block':'none';fb.textContent=tab==='proj'?'+ Projet':'+ Dépense';
+ $('#dt').textContent=greet()+' · '+fd(new Date())}
+
+function sheet(title,body,ok,label){
+ const o=document.createElement('div');o.className='ov';
+ o.innerHTML=`<div class="sh"><h3>${title}</h3>${body}<div class="row"><button class="btn ghost" data-x>Annuler</button><button class="btn" data-ok>${label||'Enregistrer'}</button></div></div>`;
+ document.body.appendChild(o);
+ o.addEventListener('click',e=>{if(e.target===o||e.target.hasAttribute('data-x'))o.remove();else if(e.target.hasAttribute('data-ok')){if(ok(k=>o.querySelector('[name='+k+']').value)!==false)o.remove()}})}
+
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,i=+t.dataset.i;
+ if(a==='tab'){tab=t.dataset.t;R();scrollTo(0,0)}
+ else if(a==='theme'){const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'}
+ else if(a==='sal'){const v=+$('#sal').value;if(v>=0){S.inc[ym(new Date())]=v;save();R()}}
+ else if(a==='fab'){tab==='proj'?addProj():addExp()}
+ else if(a==='xp')addExp(t.dataset.e)
+ else if(a==='tk'){const x=S.proj[i].tasks[+t.dataset.j];x.done=t.checked;save();R()}
+ else if(a==='addtk'){const v=$('#nt'+i).value.trim();if(v){(S.proj[i].tasks=S.proj[i].tasks||[]).push({t:v,done:false});save();R()}}
+ else if(a==='pay')sheet('Verser sur le projet',`<input name="a" type="number" inputmode="decimal" placeholder="Montant">`,v=>{const n=+v('a');if(!(n>0))return false;S.proj[i].saved+=n;save();R()},'Verser');
+ else if(a==='delp'){if(confirm('Supprimer ce projet ?')){S.proj.splice(i,1);save();R()}}
+ else if(a==='dx'){S.exp=S.exp.filter(x=>x.id!==t.dataset.id);save();R()}
+ else if(a==='ex')editExp(t.dataset.id)
+ else if(a==='sim')sim();
+ else if(a==='prof'){S.prof=$('#pf').value;S.pct=Object.assign({},PRE[S.prof]);save();R()}
+ else if(a==='ext')addExt()
+ else if(a==='bk')backup()
+ else if(a==='addrec')addRec()
+ else if(a==='addd')addDebt()
+ else if(a==='dpay')dpay(i)
+ else if(a==='delrec'){S.rec=S.rec.filter(x=>x.id!==t.dataset.id);save();R()}
+ else if(a==='deld'){if(confirm('Supprimer cette ligne ?')){S.debts.splice(i,1);save();R()}}
+ else if(a==='rpay'){const r=S.rec.find(x=>x.id===t.dataset.id),m=mNow();if(r&&!S.rp[r.id+'|'+m]){S.rp[r.id+'|'+m]=1;S.exp.push({id:Date.now()+'r',env:r.env,a:r.a,n:r.n,d:ymd(new Date())});save();R()}}
+ else if(a==='rst'){if(confirm('Effacer toutes vos données ?')){S=JSON.parse(JSON.stringify(DEF));save();document.querySelector('.ov')?.remove();R()}}});
+
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.r){S.pct[t.dataset.r]=+t.value;$('#p_'+t.dataset.r).textContent=t.value+'%';const s=Object.values(S.pct).reduce((a,b)=>a+b,0),g=$('#tot');g.textContent=s+'%';g.className='tag '+(s===100?'g':'r');save()}
+ else if(t.dataset.c){S.cur=t.value.trim()||'FCFA';save()}
+ else if(t.dataset.pd){S.pay=Math.min(31,Math.max(0,+t.value||0));save()}
+ else if(t.dataset.nm){S.name=t.value.trim();save()}});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset.h==='y')hy=+t.value;else if(t.dataset.h==='m')hm=t.value;else return;R()});
+
+function addExp(pe){
+ sheet('Nouvelle dépense',`<select name="e">${ENV.map(x=>`<option value="${x[0]}" ${x[0]===pe?'selected':''}>${x[1]}</option>`).join('')}</select><input name="a" type="number" inputmode="decimal" placeholder="Montant"><input name="n" placeholder="Description (facultatif)"><input name="d" type="date" value="${ymd(new Date())}">`,
+ v=>{const a=+v('a');if(!(a>0)||!v('d'))return false;S.exp.push({id:Date.now()+''+Math.random().toString(36).slice(2,6),env:v('e'),a,n:v('n').trim(),d:v('d')});save();R()})}
+function editExp(id){const e=S.exp.find(x=>x.id===id);if(!e)return;
+ sheet('Modifier la dépense',`<select name="e">${ENV.map(x=>`<option value="${x[0]}" ${x[0]===e.env?'selected':''}>${x[1]}</option>`).join('')}</select><input name="a" type="number" inputmode="decimal" value="${e.a}"><input name="n" value="${esc(e.n||'')}" placeholder="Description (facultatif)"><input name="d" type="date" value="${e.d}">`,
+ v=>{const a=+v('a');if(!(a>0)||!v('d'))return false;Object.assign(e,{env:v('e'),a,n:v('n').trim(),d:v('d')});save();R()})}
+function addExt(){
+ sheet('Prime ou revenu en plus',`<input name="n" placeholder="Ex. prime, activité annexe, aide reçue"><input name="a" type="number" inputmode="decimal" placeholder="Montant"><input name="d" type="date" value="${ymd(new Date())}">`,
+ v=>{const a=+v('a');if(!(a>0)||!v('d'))return false;S.ext.push({id:Date.now()+'',a,n:v('n').trim(),d:v('d')});save();R()})}
+const chargesCard=m=>`<h2>Charges fixes du mois</h2><div class="card">${S.rec.map(r=>{const ok=S.rp[r.id+'|'+m];return `<div class="task ${ok?'d':''}"><span>${esc(r.n)} · le ${r.day}</span><b style="margin-left:auto">${f(r.a)}</b>${ok?'<span class="tag g">Payé</span>':`<button class="btn sm" data-a="rpay" data-id="${r.id}">Payer</button>`}</div>`}).join('')}</div>`;
+function debtsView(){return '<h2>Dettes et avances</h2>'+(S.debts.length?S.debts.map((d,i)=>{const pd=sum(d.pay),rem=Math.max(0,d.total-pd),p=d.total?Math.min(100,pd/d.total*100):0,dd=d.date?new Date(d.date+'T00:00:00'):null,je=d.t==='dette';return `<div class="card"><div class="row sp"><b>${esc(d.n)}</b><span class="tag ${je?'r':'g'}">${je?'Je dois':'On me doit'}</span></div><div class="mu" style="margin-top:6px">${f(pd)} sur ${f(d.total)} · reste ${f(rem)}</div><div class="bar"><i style="width:${p}%;background:${je?'var(--bad)':'var(--ok)'}"></i></div><div class="mu" style="margin-top:8px">${d.who?esc(d.who)+' · ':''}${dd?'Échéance : '+fd(dd):'Sans échéance'}${d.mens>0&&rem?'<br>Mensualité : '+f(d.mens):''}</div><div class="row sp" style="margin-top:10px"><button class="btn ghost sm" data-a="dpay" data-i="${i}">${je?'+ Rembourser':'+ Reçu'}</button><button class="btn del" data-a="deld" data-i="${i}">Supprimer</button></div></div>`}).join(''):'<div class="empty">Aucune dette ni avance. Notez ici une avance sur salaire, un prêt reçu ou une somme prêtée.</div>')+'<button class="btn ghost" style="width:100%" data-a="addd">+ Dette ou avance</button>'}
+function addRec(){
+ sheet('Charge fixe',`<input name="n" placeholder="Ex. Loyer, électricité, eau, scolarité"><input name="a" type="number" inputmode="decimal" placeholder="Montant par mois"><input name="y" type="number" inputmode="numeric" min="1" max="31" placeholder="Jour du mois (ex. 5)"><select name="e">${ENV.map(x=>`<option value="${x[0]}" ${x[0]==='famille'?'selected':''}>${x[1]}</option>`).join('')}</select>`,
+ v=>{const a=+v('a'),n=v('n').trim();if(!n||!(a>0))return false;S.rec.push({id:Date.now()+'',n,a,day:Math.min(31,Math.max(1,+v('y')||1)),env:v('e')});save();R()})}
+function addDebt(){
+ sheet('Dette ou avance',`<select name="t"><option value="dette">Je dois (dette, avance sur salaire)</option><option value="pret">On me doit (j’ai prêté)</option></select><input name="n" placeholder="Nom (ex. Avance de salaire)"><input name="w" placeholder="Personne ou organisme (facultatif)"><input name="a" type="number" inputmode="decimal" placeholder="Montant total"><input name="m" type="number" inputmode="decimal" placeholder="Mensualité (facultatif)"><div class="mu">Échéance (facultatif)</div><input name="d" type="date">`,
+ v=>{const a=+v('a'),n=v('n').trim();if(!n||!(a>0))return false;S.debts.push({id:Date.now()+'',t:v('t'),n,who:v('w').trim(),total:a,mens:+v('m')||0,date:v('d'),pay:[]});save();R()})}
+function dpay(i){const d=S.debts[i];
+ sheet(d.t==='dette'?'Rembourser':'Somme reçue',`<input name="a" type="number" inputmode="decimal" placeholder="Montant"><input name="d" type="date" value="${ymd(new Date())}">`,
+ v=>{const a=+v('a'),dt=v('d');if(!(a>0)||!dt)return false;d.pay.push({a,d:dt});if(d.t==='dette')S.exp.push({id:Date.now()+'x',env:'famille',a,n:'Remboursement : '+d.n,d:dt});else S.ext.push({id:Date.now()+'x',a,n:'Remboursement reçu : '+d.n,d:dt});save();R()})}
+function addProj(){
+ sheet('Nouveau projet',`<select name="tp"><option value="">Modèle de projet (facultatif)</option>${Object.keys(TPL).map(k=>`<option>${k}</option>`).join('')}</select><input name="n" placeholder="Nom (ex. Achat de voiture)"><input name="t" type="number" inputmode="decimal" placeholder="Coût total"><input name="s" type="number" inputmode="decimal" placeholder="Déjà épargné (facultatif)"><div class="mu">Date de fin souhaitée</div><input name="d" type="date"><input name="c" type="number" inputmode="decimal" placeholder="Montant versé par mois (facultatif)">`,
+ v=>{const tp=v('tp'),n=v('n').trim()||tp,t=+v('t');if(!n||!(t>0))return false;S.proj.push({name:n,target:t,saved:+v('s')||0,date:v('d'),contrib:+v('c')||0,tasks:(TPL[tp]||[]).map(x=>({t:x,done:false}))});save();R()})}
+
+function sim(){
+ const sal=incM(ym(new Date())),x=+$('#sv').value,g=+$('#sg').value,o=$('#simres');
+ if(!sal){o.innerHTML='Saisissez d’abord votre salaire sur l’accueil.';return}
+ if(!(x>0)||x>=sal){o.innerHTML='Entrez un montant d’épargne inférieur à votre salaire.';return}
+ const max=sal-x,days=new Date(new Date().getFullYear(),new Date().getMonth()+1,0).getDate();
+ let h=`Pour épargner <b>${f(x)}</b>, dépensez au maximum <b>${f(max)}</b> ce mois-ci, soit <b>${f(max/days)}</b> par jour.`;
+ if(g>0){const m=Math.ceil(g/x),d=new Date();d.setMonth(d.getMonth()+m);h+=`<br><br>Pour atteindre ${f(g)} : ${m} mois, soit le ${fd(d)}.`}
+ o.innerHTML=h+`<div class="row" style="margin-top:12px"><button class="btn ghost" id="ap">Appliquer à ma répartition</button></div>`;
+ $('#ap').onclick=()=>{const ne=Math.min(100,Math.round(x/sal*1000)/10),oth=ENV.filter(e=>e[0]!=='epargne'),os=oth.reduce((s,e)=>s+S.pct[e[0]],0)||1;
+  oth.forEach(e=>S.pct[e[0]]=Math.round((100-ne)*S.pct[e[0]]/os*10)/10);S.pct.epargne=ne;save();R();tab='budget';R()}}
+R();
+</script></body></html>
