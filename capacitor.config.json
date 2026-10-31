@@ -1,0 +1,9 @@
+{
+  "appId": "com.monbudget.app",
+  "appName": "Mon Budget",
+  "webDir": "www",
+  "backgroundColor": "#0A5C36",
+  "android": {
+    "backgroundColor": "#0A5C36"
+  }
+}
